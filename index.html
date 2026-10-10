@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#180b11">
+  <title>Una pequeña sorpresa ♥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #180b11;
+      --wine: #64263c;
+      --rose: #dba4ad;
+      --cream: #f8eee3;
+      --muted: #c4abb4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--cream);
+      background: radial-gradient(ellipse at top, #542336 0%, transparent 58%), var(--bg);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      transition: transform .25s, background .25s;
+    }
+    button:hover { transform: translateY(-2px); }
+    button:focus-visible { outline: 2px solid var(--rose); outline-offset: 5px; }
+
+    .page {
+      width: min(100% - 36px, 480px);
+      min-height: 100svh;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 0 48px;
+      text-align: center;
+    }
+
+    .scene { display: none; width: 100%; animation: reveal .8s ease both; }
+    .scene.active { display: block; }
+    .eyebrow {
+      color: var(--rose); text-transform: uppercase; letter-spacing: 4px;
+      font-size: 10px; margin-bottom: 25px;
+    }
+    h1, h2, .letter { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; }
+    h1 { font-size: clamp(43px, 11vw, 65px); line-height: 1; margin: 0 0 20px; }
+    h2 { font-size: clamp(36px, 9vw, 52px); line-height: 1.08; margin: 0 0 22px; }
+    em { color: var(--rose); }
+    .subtitle { max-width: 330px; margin: 0 auto 30px; color: var(--muted); font-size: 13px; line-height: 1.9; }
+    .ornament { color: var(--rose); letter-spacing: 8px; margin: 28px 0; }
+
+    /* Escena 1: sobre misterioso */
+    .envelope-wrap { perspective: 900px; margin: 55px auto 38px; }
+    .envelope {
+      position: relative; width: min(76vw, 290px); height: 180px; margin: auto;
+      background: #8f4359; border-radius: 3px; box-shadow: 0 24px 70px #0005;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .envelope::before {
+      content: ''; position: absolute; inset: 0; background: #bd7787;
+      clip-path: polygon(0 0, 100% 0, 50% 58%); transform-origin: top;
+      transition: transform .7s ease; z-index: 3;
+    }
+    .envelope.open::before { transform: rotateX(180deg); }
+    .envelope::after {
+      content: ''; position: absolute; inset: 0; background: #753047;
+      clip-path: polygon(0 100%, 50% 43%, 100% 100%); z-index: 2;
+    }
+    /* El papel interior no se muestra: el sobre permanece misterioso. */
+    .seal {
+      position: absolute; z-index: 4; left: 50%; top: 50%; transform: translate(-50%, -15%);
+      display: grid; place-items: center; width: 43px; height: 43px; border-radius: 50%;
+      background: #f0d5b5; color: #76283e; font-size: 21px; transition: opacity .3s;
+    }
+    .envelope.open .seal { opacity: 0; }
+
+    /* Escenas 2 y 3 */
+    .message-card {
+      border: 1px solid #784052; background: #2a121d99; padding: 28px 23px;
+      margin: 30px 0; box-shadow: 0 20px 60px #0002;
+    }
+    .message {
+      font-family: 'Cormorant Garamond', Georgia, serif; font-size: 23px;
+      line-height: 1.65; white-space: pre-line; color: #f1dfe0;
+    }
+    #personalMessage { min-height: 100px; margin: 0; }
+    .typing-cursor {
+      display: inline-block; width: 2px; height: 1em; margin-left: 4px;
+      vertical-align: -2px; background: var(--rose);
+      animation: cursorBlink .8s steps(2, start) infinite;
+    }
+    .typing-cursor.finished { display: none; }
+    .music-button {
+      margin: 0 auto 25px; padding: 11px 18px; border: 1px solid #704052;
+      border-radius: 30px; background: #2a121d; color: var(--rose);
+      font-size: 11px; letter-spacing: .5px;
+    }
+    .music-button:hover { background: #492032; }
+    .details {
+      margin: 30px 0; border-top: 1px solid #704052; border-bottom: 1px solid #704052;
+      padding: 22px 10px; display: grid; gap: 20px;
+    }
+    .detail-label {
+      display: block; color: var(--rose); text-transform: uppercase;
+      font-size: 9px; letter-spacing: 2px; margin-bottom: 7px;
+    }
+    .detail-value { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 23px; }
+    .primary {
+      display: inline-block; width: 100%; max-width: 330px; padding: 16px 20px;
+      color: #3c1826; background: var(--cream); border: 0; border-radius: 3px;
+      font-size: 12px; letter-spacing: .4px;
+    }
+    .primary:hover { background: #f0d4d6; }
+    .secondary {
+      width: 100%; max-width: 330px; padding: 14px; background: transparent;
+      color: var(--muted); border: 1px solid #704052; border-radius: 3px; font-size: 12px;
+    }
+    .actions { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 25px; }
+    .response {
+      display: none; margin-top: 25px; padding: 22px; border: 1px solid #8d5364;
+      line-height: 1.8; color: var(--cream); white-space: pre-line; animation: reveal .6s ease both;
+    }
+    .response.visible { display: block; }
+    .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 10; }
+    .heart { position: absolute; bottom: -35px; color: var(--rose); animation: floatUp 4s ease-in forwards; }
+    .progress { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 9px; z-index: 5; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #78505e; transition: background .3s, transform .3s; }
+    .dot.active { background: var(--rose); transform: scale(1.4); }
+    footer { margin-top: 45px; color: #967581; font-size: 9px; letter-spacing: 2px; }
+
+    @keyframes reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes floatUp { to { transform: translateY(-110vh) rotate(40deg); opacity: 0; } }
+    @keyframes cursorBlink { to { visibility: hidden; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-label="Progreso de la invitación">
+    <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+  </div>
+
+  <main class="page">
+    <!-- ESCENA 1 -->
+    <section class="scene active" id="scene1">
+      <div class="eyebrow">Capítulo I · El comienzo</div>
+      <h1>Una pequeña<br><em>sorpresa...</em></h1>
+      <p class="subtitle">A veces, las cosas más bonitas comienzan con un pequeño misterio.<br><br>Hay algo que preparé especialmente para ti.</p>
+
+      <div class="envelope-wrap">
+        <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Abrir el sobre">
+          <div class="seal">♥</div>
+        </div>
+      </div>
+
+      <button class="primary" id="toScene2" type="button">Descubrir la carta</button>
+      <div class="ornament">✦ &nbsp; ♡ &nbsp; ✦</div>
+    </section>
+
+    <!-- ESCENA 2 -->
+    <section class="scene" id="scene2">
+      <div class="eyebrow">Capítulo II · Un mensaje especial</div>
+      <h2>Unas palabras<br><em>para ti...</em></h2>
+      <div class="ornament">❧ ♥ ❧</div>
+      <div class="message-card">
+        <p class="message" id="personalMessage"></p><span id="typingCursor" class="typing-cursor" aria-hidden="true"></span>
+      </div>
+      <button class="music-button" id="musicToggle" type="button" aria-pressed="false">♫ Activar música</button>
+      <p class="subtitle">Y aunque podría seguir escribiendo, hay algo que prefiero preguntarte.</p>
+      <button class="primary" id="toScene3" type="button">Hay algo más para ti… ♥</button>
+      <div style="margin-top: 15px"><button class="secondary" id="backTo1" type="button">Volver a la carta</button></div>
+    </section>
+
+    <!-- ESCENA 3 -->
+    <section class="scene" id="scene3">
+      <div class="eyebrow">Capítulo III · Una invitación</div>
+      <h2>¿Me permitirías<br><em>un momento contigo?</em></h2>
+      <div class="ornament">✦ ♥ ✦</div>
+      <p class="message" id="invitationMessage"></p>
+      <div class="details">
+        <div><span class="detail-label">La fecha</span><span class="detail-value" id="date"></span></div>
+        <div><span class="detail-label">El lugar</span><span class="detail-value" id="place"></span></div>
+        <div><span class="detail-label">El plan</span><span class="detail-value" id="plan"></span></div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="yesBtn" type="button">Sí, acepto la invitación ♥</button>
+        <button class="secondary" id="laterBtn" type="button">Déjame pensarlo un poquito</button>
+        <button class="secondary" id="backTo2" type="button">Volver al mensaje</button>
+      </div>
+      <div class="response" id="response" aria-live="polite"></div>
+    </section>
+
+    <footer>HECHO CON CARIÑO · SOLO PARA TI</footer>
+  </main>
+
+  <div class="hearts" id="hearts"></div>
+  <audio id="backgroundMusic" loop preload="metadata">
+    <source src="./leberch-romantic-584478.mp3" type="audio/mpeg">
+    Tu navegador no puede reproducir este audio.
+  </audio>
+
+  <script>
+    // PERSONALIZA AQUÍ TU INVITACIÓN
+    const invitacion = {
+      mensaje: "Hay personas que llegan y hacen que los momentos más sencillos se vuelvan especiales.\n\nNo sé qué nos depara el destino, pero me gustaría descubrir qué recuerdos bonitos podríamos crear juntos.\n\nPor eso, hoy quería dedicarte estas palabras.",
+      pregunta: "Quiero invitarte a compartir un momento conmigo. Sin prisas, sin expectativas imposibles; simplemente tú, yo y la oportunidad de crear un recuerdo bonito.",
+      fecha: "10/10/2026",
+      lugar: "Café de la esquina, luego restaurante especial y después un paseo por el parque",
+      plan: "Café, cena y paseo"
+    };
+
+    const scenes = [
+      document.getElementById('scene1'),
+      document.getElementById('scene2'),
+      document.getElementById('scene3')
+    ];
+    const dots = document.querySelectorAll('.dot');
+    const envelope = document.getElementById('envelope');
+    const messageElement = document.getElementById('personalMessage');
+    const typingCursor = document.getElementById('typingCursor');
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    const musicToggle = document.getElementById('musicToggle');
+
+    let currentScene = 0;
+    let envelopeOpened = false;
+    let typingTimer = null;
+    let typingRun = 0;
+
+    document.getElementById('invitationMessage').textContent = invitacion.pregunta;
+    document.getElementById('date').textContent = invitacion.fecha;
+    document.getElementById('place').textContent = invitacion.lugar;
+    document.getElementById('plan').textContent = invitacion.plan;
+    backgroundMusic.volume = 0.25;
+
+    function showScene(index) {
+      if (index < 0 || index >= scenes.length) return;
+      scenes[currentScene].classList.remove('active');
+      currentScene = index;
+      scenes[currentScene].classList.add('active');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (index === 1) startTyping();
+      else stopTyping();
+    }
+
+    function startTyping() {
+      typingRun++;
+      const thisRun = typingRun;
+      if (typingTimer !== null) clearTimeout(typingTimer);
+      typingTimer = null;
+      messageElement.textContent = '';
+      typingCursor.classList.remove('finished');
+      let position = 0;
+
+      function writeCharacter() {
+        if (thisRun !== typingRun || currentScene !== 1) return;
+        if (position >= invitacion.mensaje.length) {
+          typingCursor.classList.add('finished');
+          typingTimer = null;
+          return;
+        }
+        messageElement.textContent += invitacion.mensaje[position++];
+        typingTimer = setTimeout(writeCharacter, 38);
+      }
+      writeCharacter();
+    }
+
+    function stopTyping() {
+      typingRun++;
+      if (typingTimer !== null) clearTimeout(typingTimer);
+      typingTimer = null;
+    }
+
+    async function playMusic() {
+      try {
+        await backgroundMusic.play();
+        musicToggle.textContent = '♫ Pausar música';
+        musicToggle.setAttribute('aria-pressed', 'true');
+      } catch (error) {
+        musicToggle.textContent = '♫ Activar música';
+        musicToggle.setAttribute('aria-pressed', 'false');
+        console.warn('No se pudo reproducir la música. Comprueba que el MP3 exista junto a index.html.', error);
+      }
+    }
+
+    function pauseMusic() {
+      backgroundMusic.pause();
+      musicToggle.textContent = '♫ Activar música';
+      musicToggle.setAttribute('aria-pressed', 'false');
+    }
+
+    function openEnvelope() {
+      if (envelopeOpened) return;
+      envelopeOpened = true;
+      envelope.classList.add('open');
+      playMusic();
+      setTimeout(() => showScene(1), 500);
+    }
+
+    envelope.addEventListener('click', openEnvelope);
+    envelope.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openEnvelope();
+      }
+    });
+    document.getElementById('toScene2').addEventListener('click', openEnvelope);
+    document.getElementById('toScene3').addEventListener('click', () => showScene(2));
+    document.getElementById('backTo1').addEventListener('click', () => showScene(0));
+    document.getElementById('backTo2').addEventListener('click', () => showScene(1));
+
+    musicToggle.addEventListener('click', () => {
+      if (backgroundMusic.paused) playMusic();
+      else pauseMusic();
+    });
+
+    function celebrate() {
+      const container = document.getElementById('hearts');
+      for (let i = 0; i < 35; i++) {
+        const heart = document.createElement('span');
+        heart.className = 'heart';
+        heart.textContent = Math.random() > 0.5 ? '♥' : '♡';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 1.5 + 's';
+        heart.style.fontSize = (14 + Math.random() * 20) + 'px';
+        container.appendChild(heart);
+        heart.addEventListener('animationend', () => heart.remove());
+      }
+    }
+
+    function showResponse(message) {
+      const response = document.getElementById('response');
+      response.textContent = message;
+      response.classList.add('visible');
+      response.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    
+
+
+const numeroWhatsApp = "573222291007";
+
+
+function responderPorWhatsApp(respuesta, incluirInvitacion = true) {
+  const partes = [respuesta];
+
+  // Solo añadir los detalles cuando corresponda.
+  if (incluirInvitacion) {
+    partes.push(
+      "",
+      `📅 Fecha: ${invitacion.fecha}`,
+      `📍 Lugar: ${invitacion.lugar}`,
+      `✨ Plan: ${invitacion.plan}`,
+      "",
+      "💌 Una invitación preparada con cariño ❤️😍🌹"
+    );
+  }
+
+  const mensaje = partes.join("\n");
+  const url = new URL("https://api.whatsapp.com/send");
+
+  url.searchParams.set("phone", "573222291007");
+  url.searchParams.set("text", mensaje);
+
+  window.open(url.href, "_blank");
+}
+
+
+
+
+// 💖 Botón de aceptar
+
+
+document.getElementById("yesBtn").addEventListener("click", () => {
+  showResponse(
+    "¡Entonces tenemos una cita! ♥\n\n" +
+    "¡Ya quiero que llegue ese día! 💕"
+  );
+
+  responderPorWhatsApp(
+    "¡SÍ, ACEPTO LA INVITACIÓN! 😍❤️🥰\n\n" +
+    "Me encantaría compartir ese momento contigo. 🌹✨"
+  );
+
+  document.getElementById("laterBtn").disabled = true;
+  celebrate();
+});
+
+document.getElementById("laterBtn").addEventListener("click", () => {
+  showResponse(
+    "No hay afán. ♥ Tómate tu tiempo; " +
+    "lo importante es que te sientas a gusto."
+  );
+
+  responderPorWhatsApp(
+  "Quiero pensarlo un poquito más. 🥹💕\n\n" +
+  "Gracias por esta invitación tan bonita. 🌷❤️",
+  false
+);
+});
+
+  </script>
+</body>
+</html>
